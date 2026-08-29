@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tfm_bwinter"
+version = "0.0.1"
+authors = [
+  { name = "Bastian Malte Winter", email = "bastianmaltewinter@proton.me" },
+]
+description = "Simple 2D traction force simulation and calculations."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/WinterBM/TFM.git"
