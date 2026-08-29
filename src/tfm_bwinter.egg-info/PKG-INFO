@@ -1,0 +1,15 @@
+Metadata-Version: 2.4
+Name: tfm_bwinter
+Version: 0.0.1
+Summary: Simple 2D traction force simulation and calculations.
+Author-email: Bastian Malte Winter <bastianmaltewinter@proton.me>
+Project-URL: Homepage, https://github.com/WinterBM/TFM.git
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
+# TFM
