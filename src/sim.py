@@ -59,18 +59,3 @@ def generate_after(before, d, magnitude):
                 # Clear original position
                 after[row][col] = 0
     return after
-
-
-d = 1000
-before = generate_before(d, 5)
-after = generate_after(before, d, 100)
-
-# Visualization
-plt.figure(figsize=(8, 8))
-plt.imshow(before, cmap="plasma", interpolation="nearest")
-plt.colorbar(label="Number of Particles")
-
-plt.figure(figsize=(8, 8))
-plt.imshow(after, cmap="plasma", interpolation="nearest")
-plt.colorbar(label="Number of Particles")
-plt.show()
