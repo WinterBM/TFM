@@ -1,0 +1,12 @@
+{
+  "pythonVersion": "3.14",
+  "pythonPath": "/opt/miniconda3/envs/tfm/bin/python",
+  "include": [
+    "src",
+    "mylib"
+  ],
+  "extraPaths": [
+    "src"
+  ],
+  "reportMissingImports": "error"
+}
