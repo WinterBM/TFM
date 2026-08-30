@@ -34,8 +34,15 @@ def force(
     distance = np.sqrt(x**2 + y**2)
     if distance < 1e-6:
         return 0, 0
-    dx = -x * magnitude / distance
-    dy = -y * magnitude / distance
+    # Rotation
+    dx = -y
+    dy = x
+    # Inwards force
+    dx -= x
+    dy -= y
+    # Scaling
+    dx *= magnitude / distance
+    dy *= magnitude / distance
 
     # Add random noise
     noise_x = random.uniform(-noise_strength, noise_strength)
@@ -64,7 +71,7 @@ def generate_after(
     d = np.shape(before)[0]
     for row in range(d):
         for col in range(d):
-            if before[row][col] == 1:
+            if before[row][col] > 0:
                 # Relative position to center
                 x = col - d / 2
                 y = row - d / 2
@@ -74,29 +81,12 @@ def generate_after(
                 step_x = int(np.rint(dx))
                 step_y = int(np.rint(dy))
 
-                # or use probabilistic step
-                if random.random() < 0.5:
-                    step_x = 0
-                if random.random() < 0.5:
-                    step_y = 0
-
                 new_row = row + step_y
                 new_col = col + step_x
 
-                if (
-                    0 <= new_row < d
-                    and 0 <= new_col < d
-                    and after[new_row][new_col] == 0
-                ):
-                    after[new_row][new_col] = 1
-                    after[row][col] = 0
-                elif (
-                    0 <= new_row < d
-                    and 0 <= new_col < d
-                    and after[new_row][new_col] == 1
-                ):
-                    print("Hi")
+                if 0 <= new_row < d and 0 <= new_col < d:
+                    after[new_row][new_col] += 1
 
                 # Clear original position
-                after[row][col] = 0
+                after[row][col] -= 1
     return after

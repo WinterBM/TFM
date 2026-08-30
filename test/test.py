@@ -4,11 +4,11 @@ from matplotlib.animation import FuncAnimation
 
 import sim
 
-steps = 1000  # Number of animation steps
-fps = 10  # Frames per second
+steps = 100  # Number of animation steps
+fps = 60  # Frames per second
 d = 1000
 bead_density = 9
-strength = 5
+strength = 50
 noise = 0
 
 # === Setup Animation ===
