@@ -4,12 +4,12 @@ from matplotlib.animation import FuncAnimation
 
 import sim
 
-steps = 100  # Number of animation steps
+steps = 5000  # Number of animation steps
 fps = 60  # Frames per second
 d = 1000
 bead_density = 9
-strength = -5
-noise = 0
+strength = 50
+noise = 1
 
 # === Setup Animation ===
 fig = plt.figure()
@@ -22,9 +22,6 @@ current = sim.generate_before(d, bead_density)
 # Animation update function
 def update(frame):
     global current
-    global strength
-    if frame % 10 == 0:
-        strength *= -1
     current = sim.generate_after(current, strength, noise)
     im.set_array(current)
     plt.title(f"Simulation Step {frame + 1}")  # No animated=True needed
