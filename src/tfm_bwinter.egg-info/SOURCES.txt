@@ -7,3 +7,4 @@ src/tfm_bwinter.egg-info/PKG-INFO
 src/tfm_bwinter.egg-info/SOURCES.txt
 src/tfm_bwinter.egg-info/dependency_links.txt
 src/tfm_bwinter.egg-info/top_level.txt
+test/test.py
