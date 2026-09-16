@@ -1,6 +1,8 @@
 import random
+import math
 
 import numpy as np
+from scipy.special import ellipe, ellipk
 
 
 def generate_before(d: int, bead_density: int) -> np.ndarray:
@@ -60,58 +62,62 @@ def Heavy_Side(x):
         return 1
 
 
-def force_cell(
-    x: float,
-    y: float,
-    cell_center_x: float,
-    cell_center_y: float,
-    magnitude: float,
-    radius: float,
-    noise_strength: float = 0.0,
-):
-    """
-    Simulate a cell pulling on the substrate with radial inward force.
-
-    Args:
-        x, y: Position relative to substrate center
-        cell_center_x, cell_center_y: Center of the cell (in substrate coordinates)
-        magnitude: Peak force magnitude (at cell edge)
-        radius: Radius of the cell (in pixels)
-        noise_strength: Add random noise to displacement (for realism)
-
-    Returns:
-        (dx, dy): Displacement vector (in pixels)
-    """
-    # Relative position to cell center
-    dx_cell = x - cell_center_x
-    dy_cell = y - cell_center_y
-    r = np.sqrt(dx_cell**2 + dy_cell**2)
-
-    # Force only inside cell
-    if r > radius:
-        return 0.0, 0.0
-
-    # Radial inward force (Hertz-like, but simplified)
-    # Force decreases from edge to center
-    force_factor = magnitude * (1 - r / radius)  # Linear decay from edge to center
-
-    # Direction: inward
+def traction_patch(x, y, R=50.0, nu=0.5, f0=1, E=1):
+    r = np.sqrt(x**2 + y**2)
+    epsilon = r**2 / R**2
+    theta = np.arcsin(y / r)
     if r < 1e-6:
-        return 0.0, 0.0
+        return 0, 0
+    if r < R:
+        N1 = 4 * ellipk(epsilon)
+        N2 = (
+            4
+            * np.cos(2 * theta)
+            * ((r**2 + R**2) * ellipk(epsilon) + (r**2 - R**2) * ellipe(epsilon))
+        ) / (3 * r**2)
+        N2 += 4 * np.sin(theta) ** 2 * ellipk(epsilon)
+        N3 = (
+            2
+            * np.cos(2 * theta)
+            * (
+                (r**2 + 2 * R**2) * ellipk(epsilon)
+                + 2 * (r**2 - R**2) * ellipe(epsilon)
+            )
+        ) / (3 * r**2)
+        N4 = (
+            -N2
+            - 4 * np.sin(theta) ** 2 * ellipk(epsilon)
+            + 4 * np.cos(theta) ** 2 * ellipk(epsilon)
+        )
+    else:
+        epsilon2 = R**2 / r**2
+        N1 = (4 * (r**2 * ellipk(epsilon2)) + (R**2 - r**2) * ellipe(epsilon2)) / (
+            r * R
+        )
+        N2 = (
+            (6 * r**2 - 2 * (r**2 - 2 * R**2) * np.cos(theta)) * ellipk(epsilon2)
+            + 2 * (r**2 - R**2) * (np.cos(2 * theta) - 3) * ellipe(epsilon2)
+        ) / (3 * r * R)
+        N3 = (
+            2
+            * np.sin(2 * theta)
+            * ((r**2 - 2 * R**2) * ellipk(epsilon2) + (R**2 - r**2) * ellipe(epsilon2))
+        ) / (3 * r * R)
+        N4 = (
+            (6 * r**2 - 2 * (r**2 - 2 * R**2) * np.cos(theta)) * ellipk(epsilon2)
+            - 2 * (r**2 - R**2) * (np.cos(2 * theta) - 3) * ellipe(epsilon2)
+        ) / (3 * r * R)
 
-    # Normalize direction
-    dir_x = -dx_cell / r
-    dir_y = -dy_cell / r
-
-    # Apply force
-    disp_x = force_factor * dir_x
-    disp_y = force_factor * dir_y
-
-    # Add noise (realistic for imaging)
-    disp_x += random.uniform(-noise_strength, noise_strength)
-    disp_y += random.uniform(-noise_strength, noise_strength)
-
-    return disp_x, disp_y
+    dx = ((R * (1 + nu)) / (np.pi * E)) * (
+        ((1 - nu) * N1 + nu * N2) * f0 * np.cos(theta) - N3 * f0 * np.sin(theta)
+    )
+    dy = ((R * (1 + nu)) / (np.pi * E)) * (
+        -nu * N3 * f0 * np.cos(theta) + ((1 - nu) * N1 + nu * N4) * f0 * np.sin(theta)
+    )
+    print(dx, dy)
+    if math.isnan(dx) or math.isnan(dy) or math.isinf(dx) or math.isinf(dy):
+        return 0, 0
+    return dx, dy
 
 
 # Apply force and move beads
@@ -136,7 +142,7 @@ def generate_after(
                 # Relative position to center
                 x = col - d // 2
                 y = row - d // 2
-                dx, dy = force(x, y, magnitude, noise_strength)
+                dx, dy = traction_patch(x, y, f0=0.1)
 
                 step_x = int(np.rint(dx))
                 step_y = int(np.rint(dy))
