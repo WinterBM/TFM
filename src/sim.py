@@ -1,5 +1,5 @@
-import random
 import math
+import random
 
 import numpy as np
 from scipy.special import ellipe, ellipk
@@ -62,7 +62,7 @@ def Heavy_Side(x):
         return 1
 
 
-def traction_patch(x, y, R=50.0, nu=0.5, f0=1, E=1):
+def traction_patch(x, y, R=50.0, nu=0.5, f0=1.0, E=1):
     r = np.sqrt(x**2 + y**2)
     epsilon = r**2 / R**2
     theta = np.arcsin(y / r)
