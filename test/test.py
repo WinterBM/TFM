@@ -8,7 +8,7 @@ steps = 5000  # Number of animation steps
 fps = 120  # Frames per second
 d = 1000
 bead_density = 9
-strength = 70
+strength = 0.01
 noise = 5
 
 # === Setup Animation ===

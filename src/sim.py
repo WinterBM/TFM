@@ -142,7 +142,7 @@ def generate_after(
                 # Relative position to center
                 x = col - d // 2
                 y = row - d // 2
-                dx, dy = traction_patch(x, y, f0=0.1)
+                dx, dy = traction_patch(x, y, R=50.0, nu=0.5, f0=magnitude, E=1)
 
                 step_x = int(np.rint(dx))
                 step_y = int(np.rint(dy))
