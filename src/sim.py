@@ -114,7 +114,7 @@ def traction_patch(x, y, R=50.0, nu=0.5, f0=1.0, E=1):
     dy = ((R * (1 + nu)) / (np.pi * E)) * (
         -nu * N3 * f0 * np.cos(theta) + ((1 - nu) * N1 + nu * N4) * f0 * np.sin(theta)
     )
-    print(dx, dy)
+
     if math.isnan(dx) or math.isnan(dy) or math.isinf(dx) or math.isinf(dy):
         return 0, 0
     return dx, dy
