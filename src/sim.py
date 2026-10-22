@@ -55,13 +55,6 @@ def force(
     return total_dx, total_dy
 
 
-def Heavy_Side(x):
-    if x < 0:
-        return 0
-    else:
-        return 1
-
-
 def traction_patch(x, y, R=50.0, nu=0.5, f0=1.0, E=1):
     r = np.sqrt(x**2 + y**2)
     epsilon = r**2 / R**2
@@ -118,6 +111,13 @@ def traction_patch(x, y, R=50.0, nu=0.5, f0=1.0, E=1):
     if math.isnan(dx) or math.isnan(dy) or math.isinf(dx) or math.isinf(dy):
         return 0, 0
     return dx, dy
+
+
+def Gaussian_Force(x, y, force_strength):
+
+    force_x = force_strength * np.exp(-((x) ** 2 + (y) ** 2) / (2 * 10**2)) * (x) / 10
+    force_y = force_strength * np.exp(-((x) ** 2 + (y) ** 2) / (2 * 10**2)) * (y) / 10
+    return force_x, force_y
 
 
 # Apply force and move beads
