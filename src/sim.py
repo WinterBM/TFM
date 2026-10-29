@@ -115,8 +115,8 @@ def traction_patch(x, y, R=50.0, nu=0.5, f0=1.0, E=1):
 
 def Gaussian_Force(x, y, force_strength):
 
-    force_x = force_strength * np.exp(-((x) ** 2 + (y) ** 2) / (2 * 10**2)) * (x) / 10
-    force_y = force_strength * np.exp(-((x) ** 2 + (y) ** 2) / (2 * 10**2)) * (y) / 10
+    force_x = -force_strength * np.exp(-((x) ** 2 + (y) ** 2) / (2 * 10**2)) * (x) / 10
+    force_y = -force_strength * np.exp(-((x) ** 2 + (y) ** 2) / (2 * 10**2)) * (y) / 10
     return force_x, force_y
 
 
@@ -142,7 +142,7 @@ def generate_after(
                 # Relative position to center
                 x = col - d // 2
                 y = row - d // 2
-                dx, dy = traction_patch(x, y, R=50.0, nu=0.5, f0=magnitude, E=1)
+                dx, dy = Gaussian_Force(x, y, magnitude)
 
                 step_x = int(np.rint(dx))
                 step_y = int(np.rint(dy))
