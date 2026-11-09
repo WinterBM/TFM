@@ -142,7 +142,7 @@ def generate_after(
                 # Relative position to center
                 x = col - d // 2
                 y = row - d // 2
-                dx, dy = Gaussian_Force(x, y, magnitude)
+                dx, dy = force(x, y, magnitude, noise_strength)
 
                 step_x = int(np.rint(dx))
                 step_y = int(np.rint(dy))
