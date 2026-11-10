@@ -156,3 +156,41 @@ def generate_after(
                 # Clear original position
                 after[row][col] -= 1
     return after
+
+
+def generate_after_vector(
+    before: np.ndarray,
+    ux: np.ndarray,
+    uy: np.ndarray,
+) -> np.ndarray:
+    """Generates particle field after force application.
+
+    Args:
+        before: Before Image
+        magnitude: Magnitude of force
+        force_par: force parameters
+
+    Returns:
+
+    """
+    after = np.copy(before)
+    d = np.shape(before)[0]
+    for row in range(d):
+        for col in range(d):
+            if before[row][col] > 0:
+                # Relative position to center
+                dx = ux[row][col]
+                dy = uy[row][col]
+
+                step_x = int(np.rint(dx))
+                step_y = int(np.rint(dy))
+
+                new_row = row + step_y
+                new_col = col + step_x
+
+                if 0 <= new_row < d and 0 <= new_col < d:
+                    after[new_row][new_col] += 1
+
+                # Clear original position
+                after[row][col] -= 1
+    return after
