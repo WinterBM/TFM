@@ -8,7 +8,7 @@ import vector
 
 d = 1000
 bead_density = 9
-A = 1e-2
+A = 1e5
 E = 9000
 nu = 0.49
 
@@ -21,6 +21,8 @@ plt.imshow(before)
 
 # Generate after
 ux, uy = vector.vector_force(d, A, nu, E)
+ux *= 10e6
+uy *= 10e6
 after = sim.generate_after_vector(before, ux, uy)
 
 plt.figure()
