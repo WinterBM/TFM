@@ -9,7 +9,7 @@ import vector
 
 d = 1000
 bead_density = 9
-A = 200000
+A = 2000000
 E = 10000
 nu = 0.49
 
