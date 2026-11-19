@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from traction_force.displacement import dft_displacement
+from traction_force.force import tract
 from traction_force.plot import plot_dis_vec
 
 import sim
@@ -8,7 +9,7 @@ import vector
 
 d = 1000
 bead_density = 9
-A = 200
+A = 200000
 E = 10000
 nu = 0.49
 
@@ -32,10 +33,12 @@ result = dft_displacement(before, after, 24, 24)[0]
 
 plot_dis_vec(result, mode="magnitude")
 
-resultx = result[:, :, 0]
-resulty = result[:, :, 1]
+# Calculate tractions
+tractions = tract(result, E, nu, 1, 1e-15, 70, 70, 2)
 
-print(np.max(ux))
+print(tractions)
+
+print(np.max(result))
 
 
 plt.show()
