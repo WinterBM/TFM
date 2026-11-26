@@ -43,7 +43,7 @@ def vector_force(d=1000, A=200, nu=0.49, E=9000):
     G[1][0] = G[0][1]
     G[1][1] = (1 - nu) * K_reg**2 + nu * KX**2
 
-    G = G / (mu * K_reg**4)
+    G = G / (mu * K_reg**3)
 
     # Multiply Boussinesq and Forces
     Fu = np.zeros((2, d, d), dtype=np.complex128)

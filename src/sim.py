@@ -5,22 +5,50 @@ import numpy as np
 from scipy.special import ellipe, ellipk
 
 
-def generate_before(d: int, bead_density: int) -> np.ndarray:
-    """Generates a before image.
-
+def generate_before(
+    d: int, bead_density: int, noise_level=1, background=100, amplitude=1000, sigma=0.5
+) -> np.ndarray:
+    """
+    Generates a synthetic bead image.
     Args:
-        d: Dimensions (dxd)
-        bead_density: A measure for bead density. Has to be between 1 and 10.
+        noise_level (int):
+        background (int):
+        amplitude (int):
+        sigma (float):
+        d:
+        bead_density:
 
     Returns:
 
     """
     before = np.zeros((d, d))
+
+    X, Y = np.meshgrid(np.arange(d), np.arange(d))
+    bead_pos = []
+
+    before += background
     for row in range(d):
         for col in range(d):
             if random.randrange(1, 11) > bead_density:
-                before[row][col] = 1
-    return before
+                bead_pos.append((row, col))
+            before[row][col] += np.random.normal(
+                -noise_level, noise_level
+            )  # Add some noise
+
+    for pos in bead_pos:
+        profile = (
+            amplitude
+            * np.exp(-((X - pos[1]) ** 2) / (2 * sigma**2))
+            * np.exp(-((Y - pos[0]) ** 2) / (2 * sigma**2))
+        )
+        before += profile
+
+    broad = np.mean(before) * np.exp(
+        (((X - d // 2) ** 2) + (Y - d // 2) ** 2) / (2 * d**2)
+    )
+    before -= broad
+
+    return before, bead_pos
 
 
 def force(
@@ -151,17 +179,23 @@ def generate_after(
                 new_col = col + step_x
 
                 if 0 <= new_row < d and 0 <= new_col < d:
-                    after[new_row][new_col] += 1
+                    after[new_row][new_col] += before[row][col]
 
                 # Clear original position
-                after[row][col] -= 1
+                after[row][col] -= before[row][col]
     return after
 
 
 def generate_after_vector(
     before: np.ndarray,
+    bead_pos: list,
     ux: np.ndarray,
     uy: np.ndarray,
+    background: int = 100,
+    d: int = 500,
+    noise_level: float = 1,
+    amplitude: float = 1000,
+    sigma: float = 2,
 ) -> np.ndarray:
     """Generates particle field after force application.
 
@@ -173,24 +207,36 @@ def generate_after_vector(
     Returns:
 
     """
-    after = np.copy(before)
-    d = np.shape(before)[0]
+
+    new_pos = []
+    for pos in bead_pos:
+        x = int(pos[1])
+        y = int(pos[0])
+
+        x += int(ux[y][x])
+        y += int(uy[y][x])
+        new_pos.append((y, x))
+
+    X, Y = np.meshgrid(np.arange(d), np.arange(d))
+    after = np.zeros((d, d))
+    after += background
     for row in range(d):
         for col in range(d):
-            if before[row][col] > 0:
-                # Relative position to center
-                dx = ux[row][col]
-                dy = uy[row][col]
+            after[row][col] += np.random.normal(
+                -noise_level, noise_level
+            )  # Add some noise
 
-                step_x = int(np.rint(dx))
-                step_y = int(np.rint(dy))
+    for pos in new_pos:
+        profile = (
+            amplitude
+            * np.exp(-((X - pos[1]) ** 2) / (2 * sigma**2))
+            * np.exp(-((Y - pos[0]) ** 2) / (2 * sigma**2))
+        )
+        after += profile
 
-                new_row = row + step_y
-                new_col = col + step_x
+    broad = np.mean(after) * np.exp(
+        (((X - d // 2) ** 2) + (Y - d // 2) ** 2) / (2 * d**2)
+    )
+    before -= broad
 
-                if 0 <= new_row < d and 0 <= new_col < d:
-                    after[new_row][new_col] += 1
-
-                # Clear original position
-                after[row][col] -= 1
     return after
