@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numpy as np
 from traction_force.displacement import dft_displacement
 from traction_force.force import tract
 from traction_force.plot import plot_dis_vec
@@ -7,18 +6,24 @@ from traction_force.plot import plot_dis_vec
 import sim
 import vector
 
-d = 500
+d = 256
 bead_density = 9
-A = 10000
+A = 900
 E = 1200
 nu = 0.49
-noise = 5
+noise = 10
 background = 100
 sigma = 1
+bead_intensity = 200
 
 # Generate before
 before, pos = sim.generate_before(
-    d, bead_density, noise_level=noise, background=background, sigma=sigma
+    d,
+    bead_density,
+    noise_level=noise,
+    background=background,
+    sigma=sigma,
+    amplitude=200,
 )
 
 plt.figure()
